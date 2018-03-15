@@ -5,6 +5,23 @@ import {
     StyleSheet, Text, TextInput, View, Button, ActivityIndicator, Image,
 } from 'react-native';
 
+function urlForQueryAndPage(key, value, pageNumber) {
+    const data = {
+        country: 'uk',
+        pretty: '1',
+        encoding: 'json',
+        listing_type: 'buy',
+        action: 'search_listings',
+        page: pageNumber,
+    };
+    data[key] = value;
+
+    const queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key]))
+    .join('&');
+
+    return 'https://api.nestoria.co.uk/api' + queryString;
+}
+
 export default class SearchPage extends Component<{}> {
 
     static navigationOptions = {
@@ -15,7 +32,8 @@ export default class SearchPage extends Component<{}> {
           super(props);
 
           this.state = {
-              searchString: 'london'
+              searchString: 'london',
+              isLoading: false,
           };
       }
 
@@ -25,31 +43,47 @@ export default class SearchPage extends Component<{}> {
           console.log('Current: ' + this.state.searchString + ', Next:' + event.nativeEvent.text);
       };
 
+      _executeQuery = (query) => {
+          console.log(query);
+          this.setState({isLoading: true});
+      };
+
+      _onSearchPressed = () => {
+          const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
+          this._executeQuery(query);
+      };
+
       render() {
-          console.log('SearchPage.render');
-          return (
-              <View style={styles.container}>
-                <Text style={styles.description}>
-                    Please search for houses to buy!
-                </Text>
-                <Text style={styles.description}>
-                    Search by place-name or postcode.
-                </Text>
-                <View style={styles.flowRight}>
-                    <TextInput
-                        underlineColorAndroid={'transparent'}
-                        style={styles.searchInput}
-                        placeholder='Search via name or postcode'/>
-                    <Button 
-                        onPress={() => {}}
-                        color='#48BBEC'
-                        title='Go'
-                    />
-                </View>
-                <Image source={require('./Resources/house.jpg')} style={styles.image}/>
+
+        const spinner = this.state.isLoading ?<ActivityIndicator size='large'/> : null;
+
+        console.log('SearchPage.render');
+        return (
+            <View style={styles.container}>
+            <Text style={styles.description}>
+                Please search for houses to buy!
+            </Text>
+            <Text style={styles.description}>
+                Search by place-name or postcode.
+            </Text>
+            <View style={styles.flowRight}>
+                <TextInput
+                    underlineColorAndroid={'transparent'}
+                    style={styles.searchInput}
+                    placeholder='Search via name or postcode'/>
+                <Button 
+                    onPress={this._onSearchPressed}
+                    color='#48BBEC'
+                    title='Go'
+                />
             </View>
-          );
-      }
+            <Image source={require('./Resources/house.jpg')} style={styles.image}/>
+
+            {spinner}
+
+        </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
