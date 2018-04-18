@@ -19,7 +19,7 @@ function urlForQueryAndPage(key, value, pageNumber) {
     const queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key]))
     .join('&');
 
-    return 'https://api.nestoria.co.uk/api' + queryString;
+    return 'https://api.nestoria.co.uk/api?' + queryString;
 }
 
 export default class SearchPage extends Component<{}> {
@@ -63,7 +63,11 @@ export default class SearchPage extends Component<{}> {
       _handleResponse = (response) => {
           this.setState({isLoading: false, message:''});
           if(response.application_response_code.substr(0,1) === '1') {
-              console.log('Properties found: ' + response.listings.length);
+              //console.log('Properties found: ' + response.listings.length);
+
+              // navigates to the newly added route and pass in the listings data from API request
+              // via the params argument
+              this.props.navigation.navigate('Results', {listings: response.listings});
           } else {
               this.setState({message: 'Location not recognized; please try again.'});
           }
