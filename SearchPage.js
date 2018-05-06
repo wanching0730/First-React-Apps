@@ -22,6 +22,7 @@ function urlForQueryAndPage(key, value, pageNumber) {
     return 'https://api.nestoria.co.uk/api?' + queryString;
 }
 
+// Class Component
 export default class SearchPage extends Component<{}> {
 
     static navigationOptions = {

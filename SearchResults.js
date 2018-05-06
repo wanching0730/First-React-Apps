@@ -41,6 +41,7 @@ export default class SearchResults extends Component {
     // provides unique key that React uses for efficient list item management
     _keyExtractor = (item, index) => index;
 
+    // *** where the item and index comes from??? ***
     _renderItem = ({item, index}) => (
         <ListItem 
             item = {item}
@@ -50,17 +51,23 @@ export default class SearchResults extends Component {
     );
 
     _onPressItem = (index) => {
-        console.log("Pressed row: " + index);
+        //console.log("Pressed row: " + index);
+        const { navigate, state } = this.props.navigation;
+        navigate('Property', {property: state.params.listings[index]});
     };
     
     render() {
+
+        // retrieve variable passed from SearchPage.js
         const{ params } = this.props.navigation.state;
 
         return (
             // something like ListView
             <FlatList
+
+                // source of info for the list
                 data = {params.listings}
-                keyExtractor = {this._keyExtractor}
+                keyExtractor = {this._keyExtractor} 
                 renderItem = {this._renderItem}
             />
         );
